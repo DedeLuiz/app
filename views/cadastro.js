@@ -1,6 +1,6 @@
 import LogoSenac from '../assets/senac-logo.png';
 import * as React from 'react';
-import { Text, StyleSheet, TextInput, View, Image, TouchableOpacity } from 'react-native';
+import { Text, StyleSheet, TextInput, View, Image, TouchableOpacity, ScrollView } from 'react-native';
 import * as SecureStore from 'expo-secure-store';
 import { useNavigation } from '@react-navigation/native';
 
@@ -39,7 +39,7 @@ export default function CadastroScreen({ navigation }) {
             );
             const bodyResp = await resp.json();
             const token = bodyResp.token;
-            SecureStore.setItem('bearer', token);
+            await SecureStore.setItem('bearer', token);
             navigation.navigate('Cadastro');
         } catch (error) {
             console.warn(error);
@@ -47,8 +47,8 @@ export default function CadastroScreen({ navigation }) {
     }
 
     return (
-        <View style={styles.container}>
-            <Image width={100} height={200} style={styles.logo} source={LogoSenac} />
+        <ScrollView contentContainerStyle={styles.container}>
+            <Image width={200} height={100} style={styles.logo} source={LogoSenac} />
             <Text style={styles.title}>Cadastro</Text>
             <TextInput
                 value={dataCadastro.name}
@@ -109,13 +109,13 @@ export default function CadastroScreen({ navigation }) {
             <TouchableOpacity style={styles.button} onPress={Cadastrar}>
                 <Text style={styles.buttonText}>Cadastrar</Text>
             </TouchableOpacity>
-        </View>
+        </ScrollView>
     );
 }
 
 const styles = StyleSheet.create({
     container: {
-        flex: 1,
+        flexGrow: 1,
         padding: 20,
         justifyContent: 'center',
         alignItems: 'center',

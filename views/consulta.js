@@ -1,8 +1,8 @@
 import LogoSenac from '../assets/senac-logo.png';
 import * as React from 'react';
-import { Button, Text, StyleSheet, TextInput, View, Image } from 'react-native';
+import { Button, Text, StyleSheet, TextInput, View, Image, ScrollView } from 'react-native';
 import * as SecureStore from 'expo-secure-store';
-import { useNavigation } from '@react-navigation/native'; // Importe useNavigation
+import { useNavigation } from '@react-navigation/native';
 
 export default function ConsultaScreen({ navigation }) {
   
@@ -12,28 +12,11 @@ export default function ConsultaScreen({ navigation }) {
     podologo: '',
   });
 
-  function updateDatetime(value) {
-    const newDataConsulta = {
-      ...dataConsulta,
-    };
-    newDataConsulta.datahora = value;
-    setDataConsulta(newDataConsulta);
-  }
-
-  function updatePaciente(value) {
-    const newDataConsulta = {
-      ...dataConsulta,
-    };
-    newDataConsulta.paciente = value;
-    setDataConsulta(newDataConsulta);
-  }
-
-  function updatePodologo(value) {
-    const newDataConsulta = {
-      ...dataConsulta,
-    };
-    newDataConsulta.podologo = value;
-    setDataConsulta(newDataConsulta);
+  function updateField(field, value) {
+    setDataConsulta(prevState => ({
+      ...prevState,
+      [field]: value
+    }));
   }
 
   async function Consultar() {
@@ -52,7 +35,7 @@ export default function ConsultaScreen({ navigation }) {
       );
       const bodyResp = await resp.json();
       const token = bodyResp.token;
-      SecureStore.setItem('bearer', token);
+      await SecureStore.setItem('bearer', token);
       navigation.navigate('Consulta');
     } catch (error) {
       console.warn(error);
@@ -60,75 +43,74 @@ export default function ConsultaScreen({ navigation }) {
   }
 
   return (
-    <View style={styles.container}>
+    <ScrollView contentContainerStyle={styles.container}>
       <Image
         width={100}
         height={200}
-        style={{ flex: 1, objectFit: 'contain' }}
+        style={styles.logo}
         source={LogoSenac}
       />
       <Text style={styles.title}>Consulta</Text>
       <TextInput
         value={dataConsulta.datahora}
-        onChangeText={updateDatetime}
+        onChangeText={(value) => updateField('datahora', value)}
         style={styles.input}
         placeholder="Data e Hora"
-        keyboardType="date-time"
+        keyboardType="default"
       />
       <TextInput
         value={dataConsulta.paciente}
-        onChangeText={updatePaciente}
+        onChangeText={(value) => updateField('paciente', value)}
         style={styles.input}
         placeholder="Paciente"
-        secureTextEntry={true}
         keyboardType="default"
-        textContentType="paciente"
       />
       <TextInput
         value={dataConsulta.podologo}
-        onChangeText={updatePodologo}
+        onChangeText={(value) => updateField('podologo', value)}
         style={styles.input}
         placeholder="Podologo"
-        secureTextEntry={true}
         keyboardType="default"
-        textContentType="podologo"
       />
       <Button
-        style={styles.button}
         title="Consultar"
-        onPress={() => Consultar()}
+        onPress={Consultar}
+        color="#007AFF"
       />
-    </View>
+    </ScrollView>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
-    width: 370,
-    padding: 60,
-    flexDirection: 'column',
+    flexGrow: 1,
+    padding: 20,
     alignItems: 'center',
+    justifyContent: 'center',
   },
-  title: {
-    fontSize: 60,
-  },
-  input: {
-    flex: 1,
-    fontSize: 20,
-    width: '100%',
-    maxHeight: 50,
-    textAlign: 'center',
-    flexWrap: 'nowrap',
-    borderColor: '#000',
-    borderRadius: 40,
-    borderWidth: 1,
+  logo: {
+    width: 100,
+    height: 100,
+    resizeMode: 'contain',
     marginBottom: 20,
   },
+  title: {
+    fontSize: 40,
+    marginBottom: 20,
+  },
+  input: {
+    fontSize: 18,
+    width: '100%',
+    height: 50,
+    borderColor: '#000',
+    borderRadius: 5,
+    borderWidth: 1,
+    marginBottom: 20,
+    paddingHorizontal: 15,
+    textAlign: 'center',
+    color: '#000'
+  },
   button: {
-    flex: 1,
-    fontSize: 20,
-    width: 1300,
-    display: 'flex',
+    marginTop: 20,
   },
 });

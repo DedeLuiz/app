@@ -1,8 +1,7 @@
 import LogoSenac from '../assets/senac-logo.png';
 import * as React from 'react';
-import { Button, Text, StyleSheet, TextInput, View, Image } from 'react-native';
+import { Button, Text, StyleSheet, TextInput, View, Image, ScrollView } from 'react-native';
 import * as SecureStore from 'expo-secure-store';
-import { useNavigation } from '@react-navigation/native'; // Importe useNavigation
 
 export default function AgendamentoScreen({ navigation }) {
     
@@ -12,46 +11,13 @@ export default function AgendamentoScreen({ navigation }) {
         podologo: '',
         status: '',
         descricao: ''
-    })
+    });
 
-    function updateDatetime(value) {
-        const newDataAgendamento = {
-          ...dataAgendamento,
-        };
-        newDataAgendamento.datahora = value;
-        setDataAgendamento(newDataAgendamento);
-    }
-    
-    function updatePaciente(value) {
-        const newDataAgendamento = {
-          ...dataAgendamento,
-        };
-        newDataAgendamento.paciente = value;
-        setDataAgendamento(newDataAgendamento);
-    }
-    
-    function updatePodologo(value) {
-        const newDataAgendamento = {
-          ...dataAgendamento,
-        };
-        newDataAgendamento.podologo = value;
-        setDataAgendamento(newDataAgendamento);
-    }
-
-    function updateStatus(value) {
-        const newDataAgendamento = {
-            ...dataAgendamento,
-        };
-        newDataAgendamento.status = value;
-        setDataAgendamento(newDataAgendamento);
-    }
-
-    function updateDescription(value) {
-        const newDataAgendamento = {
-            ...dataAgendamento,
-        };
-        newDataAgendamento.descricao = value;
-        setDataAgendamento(newDataAgendamento);
+    function updateField(field, value) {
+        setDataAgendamento(prevState => ({
+            ...prevState,
+            [field]: value
+        }));
     }
 
     async function Agendar() {
@@ -70,7 +36,7 @@ export default function AgendamentoScreen({ navigation }) {
             );
             const bodyResp = await resp.json();
             const token = bodyResp.token;
-            SecureStore.setItem('bearer', token);
+            await SecureStore.setItem('bearer', token);
             navigation.navigate('Agendamento');
         } catch (error) {
             console.warn(error);
@@ -78,88 +44,80 @@ export default function AgendamentoScreen({ navigation }) {
     }
 
     return (
-        <View style={styles.container}>
-            <Image width={100} height={200} style={{ flex: 1, objectFit: 'contain' }} source={LogoSenac} />
+        <ScrollView contentContainerStyle={styles.container}>
+            <Image width={100} height={100} style={styles.logo} source={LogoSenac} />
             <Text style={styles.title}>Agendamento</Text>
             <TextInput
                 value={dataAgendamento.datahora}
-                onChangeText={updateDatetime}
+                onChangeText={(value) => updateField('datahora', value)}
                 style={styles.input}
                 placeholder="Data e Hora"
-                keyboardType="date-time"
+                keyboardType="datetime"
             />
             <TextInput
                 value={dataAgendamento.paciente}
-                onChangeText={updatePaciente}
+                onChangeText={(value) => updateField('paciente', value)}
                 style={styles.input}
                 placeholder="Paciente"
-                secureTextEntry={true}
                 keyboardType="default"
-                textContentType="paciente"
             />
             <TextInput
                 value={dataAgendamento.podologo}
-                onChangeText={updatePodologo}
+                onChangeText={(value) => updateField('podologo', value)}
                 style={styles.input}
                 placeholder="Podologo"
-                secureTextEntry={true}
                 keyboardType="default"
-                textContentType="podologo"
             />
             <TextInput
                 value={dataAgendamento.status}
-                onChangeText={updateStatus}
+                onChangeText={(value) => updateField('status', value)}
                 style={styles.input}
                 placeholder='Status'
-                secureTextEntry={true}
                 keyboardType='default'
-                textContentType='status'
             />
             <TextInput
-                value={dataAgendamento.description}
-                onChangeText={updateDescription}
+                value={dataAgendamento.descricao}
+                onChangeText={(value) => updateField('descricao', value)}
                 style={styles.input}
                 placeholder='Descrição'
-                secureTextEntry={true}
                 keyboardType='default'
-                textContentType='description'
             />
             <Button
                 style={styles.button}
                 title="Agendar"
-                onPress={() => Agendamento()}
+                onPress={Agendar}
             />
-        </View>
+        </ScrollView>
     );
 }
 
 const styles = StyleSheet.create({
     container: {
-        flex: 1,
-        width: 370,
-        padding: 60,
-        flexDirection: 'column',
+        flexGrow: 1,
+        padding: 20,
         alignItems: 'center',
+        justifyContent: 'center',
     },
-    title: {
-        fontSize: 60,
-    },
-    input: {
-        flex: 1,
-        fontSize: 20,
-        width: '100%',
-        maxHeight: 50,
-        textAlign: 'center',
-        flexWrap: 'nowrap',
-        borderColor: '#000',
-        borderRadius: 40,
-        borderWidth: 1,
+    logo: {
+        width: 100,
+        height: 100,
         marginBottom: 20,
     },
+    title: {
+        fontSize: 24,
+        marginBottom: 20,
+    },
+    input: {
+        height: 50,
+        fontSize: 16,
+        width: '100%',
+        borderColor: '#000',
+        borderRadius: 8,
+        borderWidth: 1,
+        marginBottom: 15,
+        paddingHorizontal: 10,
+    },
     button: {
-        flex: 1,
-        fontSize: 20,
-        width: 1300,
-        display: 'flex',
+        marginTop: 20,
     },
 });

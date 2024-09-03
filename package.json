@@ -10,10 +10,10 @@
   },
   "dependencies": {
     "@react-navigation/native-stack": "^6.9.26",
-    "expo": "~50.0.17",
+    "expo": "^51.0.28",
     "expo-constants": "~15.4.6",
     "expo-linking": "~6.2.2",
-    "expo-router": "~3.4.10",
+    "expo-router": "^3.5.23",
     "expo-secure-store": "~12.8.1",
     "expo-status-bar": "~1.11.1",
     "react": "18.2.0",

@@ -49,12 +49,12 @@ export default function HomeScreen({ navigation }) {
         source={LogoSenac}
       />
       <Text style={styles.title}>Home</Text>
-      <View style={styles.buttonContainer}>
+      {/* <View style={styles.buttonContainer}>
         <Button
           title="Início"
           onPress={() => inicio()}
         />
-      </View>
+      </View> */}
       <View style={styles.buttonContainer}>
         <Button
           title="Agendamentos"
